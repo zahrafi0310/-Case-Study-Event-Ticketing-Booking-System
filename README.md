@@ -1,23 +1,3 @@
-# Event Ticketing & Booking System
-
-> **Course:** EF234402 – Konstruksi Perangkat Lunak / Software Construction
-> **Institution:** Institut Teknologi Sepuluh Nopember
-> **Architecture:** Clean Architecture + Domain-Driven Design (DDD)
-> **Language:** TypeScript
-> **Framework:** NestJS
-> **Database:** PostgreSQL
-
----
-
-## Table of Contents
-
-1. [Clean Architecture Folder Structure](#clean-architecture-folder-structure)
-2. [Business Rules](#business-rules)
-3. [Initial Domain Model Draft](#initial-domain-model-draft)
-4. [Ubiquitous Language Glossary](#ubiquitous-language-glossary)
-
----
-
 ## Clean Architecture Folder Structure
 
 ```
@@ -149,160 +129,128 @@ event-ticketing/
 
 ## Business Rules
 
-Business rules are derived from the user stories and acceptance criteria and enforced strictly in the **Domain Layer**.
+### Event
 
-### Event Management
-
-| # | Business Rule |
-|---|---|
-| BR-01 | An event cannot be created if the end date is earlier than the start date. |
-| BR-02 | An event cannot be created if the maximum capacity is less than or equal to zero. |
-| BR-03 | A newly created event must have the status `Draft`. |
-| BR-04 | An event can only be published if it has at least one active ticket category. |
-| BR-05 | An event can only be published if the total ticket quota does not exceed the maximum event capacity. |
-| BR-06 | An event with status `Cancelled` cannot be published. |
-| BR-07 | An event with status `Published` can be cancelled. |
-| BR-08 | An event with status `Completed` cannot be cancelled. |
-| BR-09 | When an event is cancelled, all paid bookings must be marked as requiring a refund. |
-
-### Ticket Category Management
-
-| # | Business Rule |
-|---|---|
-| BR-10 | A ticket price cannot be less than zero. |
-| BR-11 | A ticket quota must be greater than zero. |
-| BR-12 | The ticket sales period must end before or at the event start date. |
-| BR-13 | The total quota of all ticket categories must not exceed the maximum event capacity. |
-| BR-14 | A ticket category can only be disabled if the event has not been completed. |
-| BR-15 | Customers cannot purchase tickets from an inactive ticket category. |
+1. An event cannot be created if the end date is earlier than the start date.
+2. An event cannot be created if the maximum capacity is less than or equal to zero.
+3. A newly created event must have the status `Draft`.
+4. An event can only be published if it has at least one active ticket category.
+5. An event can only be published if the total ticket quota does not exceed the maximum event capacity.
+6. An event with status `Cancelled` cannot be published.
+7. An event with status `Completed` cannot be cancelled.
+8. When an event is cancelled, all paid bookings must be marked as requiring a refund.
+9. A ticket price cannot be less than zero.
+10. A ticket quota must be greater than zero.
+11. The ticket sales period must end before or at the event start date.
+12. The total quota of all ticket categories must not exceed the maximum event capacity.
 
 ### Booking
 
-| # | Business Rule |
-|---|---|
-| BR-16 | A booking can only be created for an event with status `Published`. |
-| BR-17 | A booking can only be created for an active ticket category within its sales period. |
-| BR-18 | The ticket quantity must be greater than zero. |
-| BR-19 | The ticket quantity must not exceed the remaining ticket quota. |
-| BR-20 | A customer cannot have more than one active booking for the same event. |
-| BR-21 | A newly created booking must have the status `PendingPayment`. |
-| BR-22 | A booking must have a payment deadline (15 minutes after creation). |
+1. A booking can only be created for an event with status `Published`.
+2. A booking can only be created for an active ticket category within its sales period.
+3. The ticket quantity must be greater than zero and must not exceed the remaining quota.
+4. A customer cannot have more than one active booking for the same event.
+5. A newly created booking must have the status `PendingPayment` with a payment deadline of 15 minutes after creation.
+6. A booking can only be paid if its status is `PendingPayment` and the payment deadline has not passed.
+7. The payment amount must equal the total booking price.
+8. A booking with status `PendingPayment` changes to `Expired` after its payment deadline has passed.
+9. A booking with status `Paid` cannot be marked as expired.
+10. When a booking expires, the previously reserved ticket quota is released.
+11. After payment, the system issues tickets with unique ticket codes.
+12. The total price is calculated from ticket unit price multiplied by ticket quantity and is represented using the `Money` value object.
 
-### Booking Payment
+### Refund
 
-| # | Business Rule |
-|---|---|
-| BR-23 | A booking can only be paid if its status is `PendingPayment`. |
-| BR-24 | A booking cannot be paid if the payment deadline has passed. |
-| BR-25 | The payment amount must equal the total booking price. |
-| BR-26 | After payment, the system issues tickets with unique ticket codes. |
-
-### Booking Expiry
-
-| # | Business Rule |
-|---|---|
-| BR-27 | A booking with status `PendingPayment` changes to `Expired` after its payment deadline has passed. |
-| BR-28 | A booking with status `Paid` cannot be marked as expired. |
-| BR-29 | When a booking expires, the previously reserved ticket quota is released. |
-
-### Ticket & Check-in
-
-| # | Business Rule |
-|---|---|
-| BR-30 | Check-in can only be performed for tickets matching the correct event. |
-| BR-31 | Only tickets with status `Active` can be checked in. |
-| BR-32 | A ticket that has already been checked in cannot be used again. |
-| BR-33 | Check-in can only be performed on the event day or within the allowed check-in time window. |
-
-### Refund Management
-
-| # | Business Rule |
-|---|---|
-| BR-34 | A refund can only be requested for a booking with status `Paid`. |
-| BR-35 | A refund cannot be requested if any ticket from the booking has already been checked in. |
-| BR-36 | A refund can only be requested before the refund deadline, unless the event is cancelled. |
-| BR-37 | A refund can only be approved or rejected if its status is `Requested`. |
-| BR-38 | A rejection reason must be provided when rejecting a refund. |
-| BR-39 | When a refund is approved, related tickets change to `Cancelled` and the booking changes to `Refunded`. |
-| BR-40 | A refund can only be marked as `PaidOut` if its status is `Approved`. |
-| BR-41 | A paid-out refund cannot be approved, rejected, or cancelled again. |
-
-### Pricing
-
-| # | Business Rule |
-|---|---|
-| BR-42 | The total price is calculated from ticket unit price multiplied by ticket quantity, plus any service fee. |
-| BR-43 | The total price cannot be negative. |
-| BR-44 | The total price is represented using the `Money` value object. |
+1. A refund can only be requested for a booking with status `Paid`.
+2. A refund cannot be requested if any ticket from the booking has already been checked in.
+3. A refund can only be requested before the refund deadline, unless the event is cancelled.
+4. A refund can only be approved or rejected if its status is `Requested`.
+5. A rejection reason must be provided when rejecting a refund.
+6. When a refund is approved, related tickets change to `Cancelled` and the booking changes to `Refunded`.
+7. A refund can only be marked as `PaidOut` if its status is `Approved`.
+8. A paid-out refund cannot be approved, rejected, or cancelled again.
 
 ---
 
 ## Initial Domain Model Draft
 
-### Aggregates and Entities
+### Classes Involved
 
-```
-Event (Aggregate Root)
-├── id: EventId
-├── organizerId: OrganizerId
-├── name: string
-├── description: string
-├── schedule: EventSchedule             ← Value Object (startDate, endDate)
-├── location: string
-├── maxCapacity: number
-├── status: EventStatus                 ← Enum (Draft, Published, Cancelled, Completed)
-└── ticketCategories: TicketCategory[]
+* Aggregates: `Event`, `Booking`, `Refund`
+* Entities: `TicketCategory`, `Ticket`
+* Value Objects: `Money`, `EventSchedule`, `SalesPeriod`, `TicketCode`, `PaymentDeadline`
 
-    TicketCategory (Entity)
-    ├── id: TicketCategoryId
-    ├── name: string
-    ├── price: Money                    ← Value Object
-    ├── quota: number
-    ├── remainingQuota: number
-    ├── salesPeriod: SalesPeriod        ← Value Object (startDate, endDate)
-    └── isActive: boolean
+### Implementation Details
 
-Booking (Aggregate Root)
-├── id: BookingId
-├── customerId: CustomerId
-├── eventId: EventId
-├── ticketCategoryId: TicketCategoryId
-├── quantity: number
-├── totalPrice: Money                   ← Value Object
-├── status: BookingStatus               ← Enum (PendingPayment, Paid, Expired, Refunded)
-├── paymentDeadline: PaymentDeadline    ← Value Object
-└── tickets: Ticket[]
+1. **Money** (Value Object)
+   * Stores the monetary amount of a ticket price or booking total.
+   * Amount must not be negative.
+   * Must use `number` with fixed decimal precision to avoid floating point issues.
+   * Example: `new Money(200000)`
 
-    Ticket (Entity)
-    ├── id: TicketId
-    ├── bookingId: BookingId
-    ├── ticketCode: TicketCode          ← Value Object
-    └── status: TicketStatus            ← Enum (Active, CheckedIn, Cancelled)
+2. **EventSchedule** (Value Object)
+   * Stores the start and end date of an event.
+   * End date must not be earlier than start date.
+   * Example: `new EventSchedule(new Date('2025-08-01'), new Date('2025-08-02'))`
 
-Refund (Aggregate Root)
-├── id: RefundId
-├── bookingId: BookingId
-├── requestedAt: Date
-├── status: RefundStatus                ← Enum (Requested, Approved, Rejected, PaidOut)
-├── rejectionReason?: string
-└── paymentReference?: string
-```
+3. **SalesPeriod** (Value Object)
+   * Stores the ticket sales start and end date for a ticket category.
+   * Sales end date must not be later than the event start date.
+   * Example: `new SalesPeriod(new Date('2025-07-01'), new Date('2025-07-31'))`
 
-### Value Objects
+4. **TicketCode** (Value Object)
+   * Stores the unique code assigned to a ticket after booking is paid.
+   * Must not be empty and must be unique across the system.
+   * Example: `new TicketCode('TIX-ABC123')`
 
-| Value Object | Attributes | Validation Rules |
-|---|---|---|
-| `Money` | amount (number), currency (string) | amount >= 0 |
-| `EventSchedule` | startDate (Date), endDate (Date) | endDate >= startDate |
-| `SalesPeriod` | startDate (Date), endDate (Date) | endDate <= event startDate |
-| `TicketCode` | code (string) | unique, non-empty |
-| `PaymentDeadline` | deadline (Date) | deadline > booking createdAt |
+5. **PaymentDeadline** (Value Object)
+   * Stores the deadline by which a booking must be paid.
+   * Deadline must be later than the booking creation time.
+   * Example: `new PaymentDeadline(new Date(Date.now() + 15 * 60 * 1000))`
 
-### Repository Interfaces (declared in Domain Layer)
+6. **TicketCategory** (Entity)
+   * Belongs to an `Event` aggregate.
+   * Has a name, `Money` price, quota, remaining quota, `SalesPeriod`, and active status.
+   * Example:
+     ```typescript
+     new TicketCategory('VIP', new Money(500000), 100, new SalesPeriod(...))
+     ```
 
-- `IEventRepository` — `findById`, `findPublished`, `save`, `update`
-- `IBookingRepository` — `findById`, `findByCustomerAndEvent`, `save`, `update`
-- `IRefundRepository` — `findById`, `findByBookingId`, `save`, `update`
+7. **Ticket** (Entity)
+   * Generated after a booking is paid.
+   * Has a `TicketCode` and a status of `Active`, `CheckedIn`, or `Cancelled`.
+   * Example:
+     ```typescript
+     new Ticket(new TicketCode('TIX-ABC123'), TicketStatus.Active)
+     ```
+
+8. **Event** (Aggregate Root)
+   * Manages ticket categories and enforces event lifecycle rules.
+   * Example:
+     ```typescript
+     const event = new Event('Java Jazz Festival', schedule, 'Jakarta', 5000);
+     event.addTicketCategory(new TicketCategory('Regular', new Money(200000), 4000, salesPeriod));
+     event.publish();
+     ```
+
+9. **Booking** (Aggregate Root)
+   * Created when a customer reserves tickets for an event.
+   * Manages payment and ticket issuance.
+   * Example:
+     ```typescript
+     const booking = new Booking(customerId, eventId, ticketCategoryId, 2);
+     booking.pay(new Money(400000));
+     ```
+
+10. **Refund** (Aggregate Root)
+    * Created when a customer requests a refund for a paid booking.
+    * Manages refund approval, rejection, and payout.
+    * Example:
+      ```typescript
+      const refund = new Refund(bookingId);
+      refund.approve();
+      refund.markAsPaidOut('REF-PAY-001');
+      ```
 
 ---
 
@@ -327,7 +275,7 @@ Refund (Aggregate Root)
 | **Ticket Code** | A unique code used to identify and validate a ticket during check-in. |
 | **Check-in** | The process of validating a ticket when a participant enters the event venue. |
 | **Refund** | The process of returning money to a customer. |
-| **Money** | A value object representing a monetary amount and its currency. |
+| **Money** | A value object representing a monetary amount. |
 | **Sales Period** | The time window during which a ticket category can be purchased. |
 | **Payment Deadline** | The deadline by which a booking must be paid before it expires. |
 | **Draft** | An event status indicating the event has been created but not yet published. |
