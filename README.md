@@ -8,119 +8,18 @@ event-ticketing/
 │   ├── domain/
 │   │   ├── aggregates/
 │   │   │   ├── event/
-│   │   │   │   ├── event.aggregate.ts
-│   │   │   │   ├── ticket-category.entity.ts
-│   │   │   │   └── event-status.enum.ts
 │   │   │   ├── booking/
-│   │   │   │   ├── booking.aggregate.ts
-│   │   │   │   ├── ticket.entity.ts
-│   │   │   │   ├── booking-status.enum.ts
-│   │   │   │   └── ticket-status.enum.ts
 │   │   │   └── refund/
-│   │   │       ├── refund.aggregate.ts
-│   │   │       └── refund-status.enum.ts
 │   │   ├── value-objects/
-│   │   │   ├── money.vo.ts
-│   │   │   ├── event-schedule.vo.ts
-│   │   │   ├── sales-period.vo.ts
-│   │   │   ├── ticket-code.vo.ts
-│   │   │   └── payment-deadline.vo.ts
 │   │   ├── events/
-│   │   │   ├── event-created.event.ts
-│   │   │   ├── event-published.event.ts
-│   │   │   ├── event-cancelled.event.ts
-│   │   │   ├── ticket-category-created.event.ts
-│   │   │   ├── ticket-category-disabled.event.ts
-│   │   │   ├── ticket-reserved.event.ts
-│   │   │   ├── booking-paid.event.ts
-│   │   │   ├── booking-expired.event.ts
-│   │   │   ├── ticket-checked-in.event.ts
-│   │   │   ├── refund-requested.event.ts
-│   │   │   ├── refund-approved.event.ts
-│   │   │   ├── refund-rejected.event.ts
-│   │   │   └── refund-paid-out.event.ts
 │   │   ├── repositories/
-│   │   │   ├── event.repository.interface.ts
-│   │   │   ├── booking.repository.interface.ts
-│   │   │   └── refund.repository.interface.ts
 │   │   ├── services/
-│   │   │   ├── ticket-quota.domain-service.ts
-│   │   │   └── refund-eligibility.domain-service.ts
 │   │   └── exceptions/
-│   │       └── domain.exception.ts
-│   │
 │   ├── application/
-│   │   ├── event/
-│   │   │   ├── commands/
-│   │   │   │   ├── create-event/
-│   │   │   │   │   ├── create-event.command.ts
-│   │   │   │   │   └── create-event.handler.ts
-│   │   │   │   ├── publish-event/
-│   │   │   │   │   ├── publish-event.command.ts
-│   │   │   │   │   └── publish-event.handler.ts
-│   │   │   │   └── cancel-event/
-│   │   │   │       ├── cancel-event.command.ts
-│   │   │   │       └── cancel-event.handler.ts
-│   │   │   └── queries/
-│   │   │       ├── get-available-events/
-│   │   │       └── get-event-details/
-│   │   ├── booking/
-│   │   │   ├── commands/
-│   │   │   │   ├── create-booking/
-│   │   │   │   ├── pay-booking/
-│   │   │   │   └── expire-booking/
-│   │   │   └── queries/
-│   │   │       └── get-purchased-tickets/
-│   │   ├── refund/
-│   │   │   ├── commands/
-│   │   │   │   ├── request-refund/
-│   │   │   │   ├── approve-refund/
-│   │   │   │   ├── reject-refund/
-│   │   │   │   └── mark-refund-as-paid-out/
-│   │   │   └── queries/
-│   │   ├── dtos/
-│   │   │   ├── event.dto.ts
-│   │   │   ├── booking.dto.ts
-│   │   │   └── refund.dto.ts
-│   │   └── service-interfaces/
-│   │       ├── payment-gateway.interface.ts
-│   │       ├── refund-payment.interface.ts
-│   │       └── notification.interface.ts
-│   │
 │   ├── infrastructure/
-│   │   ├── persistence/
-│   │   │   ├── typeorm/
-│   │   │   │   ├── entities/
-│   │   │   │   │   ├── event.orm-entity.ts
-│   │   │   │   │   ├── booking.orm-entity.ts
-│   │   │   │   │   └── refund.orm-entity.ts
-│   │   │   │   └── migrations/
-│   │   │   └── repositories/
-│   │   │       ├── event.repository.ts
-│   │   │       ├── booking.repository.ts
-│   │   │       └── refund.repository.ts
-│   │   └── external-services/
-│   │       ├── payment-gateway.service.ts
-│   │       ├── refund-payment.service.ts
-│   │       └── notification.service.ts
-│   │
-│   ├── presentation/
-│   │   └── controllers/
-│   │       ├── events.controller.ts
-│   │       ├── bookings.controller.ts
-│   │       ├── tickets.controller.ts
-│   │       └── refunds.controller.ts
-│   │
-│   └── app.module.ts
-│
+│   └── presentation/
 ├── test/
 │   └── domain/
-│       ├── event.spec.ts
-│       ├── ticket-category.spec.ts
-│       ├── booking.spec.ts
-│       ├── ticket.spec.ts
-│       └── refund.spec.ts
-│
 ├── nest-cli.json
 ├── tsconfig.json
 ├── package.json
