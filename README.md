@@ -3,6 +3,8 @@
 > **Course:** EF234402 – Konstruksi Perangkat Lunak / Software Construction
 > **Institution:** Institut Teknologi Sepuluh Nopember
 > **Architecture:** Clean Architecture + Domain-Driven Design (DDD)
+> **Language:** TypeScript
+> **Framework:** NestJS
 > **Database:** PostgreSQL
 
 ---
@@ -21,115 +23,126 @@
 ```
 event-ticketing/
 ├── src/
-│   ├── Domain/
-│   │   ├── Aggregates/
-│   │   │   ├── Event/
-│   │   │   │   ├── Event.cs
-│   │   │   │   ├── TicketCategory.cs
-│   │   │   │   └── EventStatus.cs
-│   │   │   ├── Booking/
-│   │   │   │   ├── Booking.cs
-│   │   │   │   ├── Ticket.cs
-│   │   │   │   ├── BookingStatus.cs
-│   │   │   │   └── TicketStatus.cs
-│   │   │   └── Refund/
-│   │   │       ├── Refund.cs
-│   │   │       └── RefundStatus.cs
-│   │   ├── ValueObjects/
-│   │   │   ├── Money.cs
-│   │   │   ├── EventSchedule.cs
-│   │   │   ├── SalesPeriod.cs
-│   │   │   ├── TicketCode.cs
-│   │   │   └── PaymentDeadline.cs
-│   │   ├── Events/
-│   │   │   ├── EventCreated.cs
-│   │   │   ├── EventPublished.cs
-│   │   │   ├── EventCancelled.cs
-│   │   │   ├── TicketCategoryCreated.cs
-│   │   │   ├── TicketCategoryDisabled.cs
-│   │   │   ├── TicketReserved.cs
-│   │   │   ├── BookingPaid.cs
-│   │   │   ├── BookingExpired.cs
-│   │   │   ├── TicketCheckedIn.cs
-│   │   │   ├── RefundRequested.cs
-│   │   │   ├── RefundApproved.cs
-│   │   │   ├── RefundRejected.cs
-│   │   │   └── RefundPaidOut.cs
-│   │   ├── Repositories/
-│   │   │   ├── IEventRepository.cs
-│   │   │   ├── IBookingRepository.cs
-│   │   │   └── IRefundRepository.cs
-│   │   ├── Services/
-│   │   │   ├── TicketQuotaService.cs
-│   │   │   └── RefundEligibilityService.cs
-│   │   └── Exceptions/
-│   │       └── DomainException.cs
+│   ├── domain/
+│   │   ├── aggregates/
+│   │   │   ├── event/
+│   │   │   │   ├── event.aggregate.ts
+│   │   │   │   ├── ticket-category.entity.ts
+│   │   │   │   └── event-status.enum.ts
+│   │   │   ├── booking/
+│   │   │   │   ├── booking.aggregate.ts
+│   │   │   │   ├── ticket.entity.ts
+│   │   │   │   ├── booking-status.enum.ts
+│   │   │   │   └── ticket-status.enum.ts
+│   │   │   └── refund/
+│   │   │       ├── refund.aggregate.ts
+│   │   │       └── refund-status.enum.ts
+│   │   ├── value-objects/
+│   │   │   ├── money.vo.ts
+│   │   │   ├── event-schedule.vo.ts
+│   │   │   ├── sales-period.vo.ts
+│   │   │   ├── ticket-code.vo.ts
+│   │   │   └── payment-deadline.vo.ts
+│   │   ├── events/
+│   │   │   ├── event-created.event.ts
+│   │   │   ├── event-published.event.ts
+│   │   │   ├── event-cancelled.event.ts
+│   │   │   ├── ticket-category-created.event.ts
+│   │   │   ├── ticket-category-disabled.event.ts
+│   │   │   ├── ticket-reserved.event.ts
+│   │   │   ├── booking-paid.event.ts
+│   │   │   ├── booking-expired.event.ts
+│   │   │   ├── ticket-checked-in.event.ts
+│   │   │   ├── refund-requested.event.ts
+│   │   │   ├── refund-approved.event.ts
+│   │   │   ├── refund-rejected.event.ts
+│   │   │   └── refund-paid-out.event.ts
+│   │   ├── repositories/
+│   │   │   ├── event.repository.interface.ts
+│   │   │   ├── booking.repository.interface.ts
+│   │   │   └── refund.repository.interface.ts
+│   │   ├── services/
+│   │   │   ├── ticket-quota.domain-service.ts
+│   │   │   └── refund-eligibility.domain-service.ts
+│   │   └── exceptions/
+│   │       └── domain.exception.ts
 │   │
-│   ├── Application/
-│   │   ├── Events/
-│   │   │   ├── Commands/
-│   │   │   │   ├── CreateEvent/
-│   │   │   │   │   ├── CreateEventCommand.cs
-│   │   │   │   │   └── CreateEventCommandHandler.cs
-│   │   │   │   ├── PublishEvent/
-│   │   │   │   │   ├── PublishEventCommand.cs
-│   │   │   │   │   └── PublishEventCommandHandler.cs
-│   │   │   │   └── CancelEvent/
-│   │   │   │       ├── CancelEventCommand.cs
-│   │   │   │       └── CancelEventCommandHandler.cs
-│   │   │   └── Queries/
-│   │   │       ├── GetAvailableEvents/
-│   │   │       └── GetEventDetails/
-│   │   ├── Bookings/
-│   │   │   ├── Commands/
-│   │   │   │   ├── CreateBooking/
-│   │   │   │   ├── PayBooking/
-│   │   │   │   └── ExpireBooking/
-│   │   │   └── Queries/
-│   │   │       └── GetPurchasedTickets/
-│   │   ├── Refunds/
-│   │   │   ├── Commands/
-│   │   │   │   ├── RequestRefund/
-│   │   │   │   ├── ApproveRefund/
-│   │   │   │   ├── RejectRefund/
-│   │   │   │   └── MarkRefundAsPaidOut/
-│   │   │   └── Queries/
-│   │   ├── DTOs/
-│   │   │   ├── EventDto.cs
-│   │   │   ├── BookingDto.cs
-│   │   │   └── RefundDto.cs
-│   │   └── ServiceInterfaces/
-│   │       ├── IPaymentGateway.cs
-│   │       ├── IRefundPaymentService.cs
-│   │       └── INotificationService.cs
+│   ├── application/
+│   │   ├── event/
+│   │   │   ├── commands/
+│   │   │   │   ├── create-event/
+│   │   │   │   │   ├── create-event.command.ts
+│   │   │   │   │   └── create-event.handler.ts
+│   │   │   │   ├── publish-event/
+│   │   │   │   │   ├── publish-event.command.ts
+│   │   │   │   │   └── publish-event.handler.ts
+│   │   │   │   └── cancel-event/
+│   │   │   │       ├── cancel-event.command.ts
+│   │   │   │       └── cancel-event.handler.ts
+│   │   │   └── queries/
+│   │   │       ├── get-available-events/
+│   │   │       └── get-event-details/
+│   │   ├── booking/
+│   │   │   ├── commands/
+│   │   │   │   ├── create-booking/
+│   │   │   │   ├── pay-booking/
+│   │   │   │   └── expire-booking/
+│   │   │   └── queries/
+│   │   │       └── get-purchased-tickets/
+│   │   ├── refund/
+│   │   │   ├── commands/
+│   │   │   │   ├── request-refund/
+│   │   │   │   ├── approve-refund/
+│   │   │   │   ├── reject-refund/
+│   │   │   │   └── mark-refund-as-paid-out/
+│   │   │   └── queries/
+│   │   ├── dtos/
+│   │   │   ├── event.dto.ts
+│   │   │   ├── booking.dto.ts
+│   │   │   └── refund.dto.ts
+│   │   └── service-interfaces/
+│   │       ├── payment-gateway.interface.ts
+│   │       ├── refund-payment.interface.ts
+│   │       └── notification.interface.ts
 │   │
-│   ├── Infrastructure/
-│   │   ├── Persistence/
-│   │   │   ├── AppDbContext.cs
-│   │   │   ├── Migrations/
-│   │   │   └── Repositories/
-│   │   │       ├── EventRepository.cs
-│   │   │       ├── BookingRepository.cs
-│   │   │       └── RefundRepository.cs
-│   │   └── ExternalServices/
-│   │       ├── PaymentGatewayService.cs
-│   │       ├── RefundPaymentService.cs
-│   │       └── NotificationService.cs
+│   ├── infrastructure/
+│   │   ├── persistence/
+│   │   │   ├── typeorm/
+│   │   │   │   ├── entities/
+│   │   │   │   │   ├── event.orm-entity.ts
+│   │   │   │   │   ├── booking.orm-entity.ts
+│   │   │   │   │   └── refund.orm-entity.ts
+│   │   │   │   └── migrations/
+│   │   │   └── repositories/
+│   │   │       ├── event.repository.ts
+│   │   │       ├── booking.repository.ts
+│   │   │       └── refund.repository.ts
+│   │   └── external-services/
+│   │       ├── payment-gateway.service.ts
+│   │       ├── refund-payment.service.ts
+│   │       └── notification.service.ts
 │   │
-│   └── Presentation/
-│       └── Controllers/
-│           ├── EventsController.cs
-│           ├── BookingsController.cs
-│           ├── TicketsController.cs
-│           └── RefundsController.cs
+│   ├── presentation/
+│   │   └── controllers/
+│   │       ├── events.controller.ts
+│   │       ├── bookings.controller.ts
+│   │       ├── tickets.controller.ts
+│   │       └── refunds.controller.ts
+│   │
+│   └── app.module.ts
 │
-└── tests/
-    └── Domain.Tests/
-        ├── EventTests.cs
-        ├── TicketCategoryTests.cs
-        ├── BookingTests.cs
-        ├── TicketTests.cs
-        └── RefundTests.cs
+├── test/
+│   └── domain/
+│       ├── event.spec.ts
+│       ├── ticket-category.spec.ts
+│       ├── booking.spec.ts
+│       ├── ticket.spec.ts
+│       └── refund.spec.ts
+│
+├── nest-cli.json
+├── tsconfig.json
+├── package.json
+└── .env.example
 ```
 
 ---
@@ -236,29 +249,29 @@ Event (Aggregate Root)
 ├── description: string
 ├── schedule: EventSchedule             ← Value Object (startDate, endDate)
 ├── location: string
-├── maxCapacity: int
+├── maxCapacity: number
 ├── status: EventStatus                 ← Enum (Draft, Published, Cancelled, Completed)
-└── ticketCategories: List<TicketCategory>
+└── ticketCategories: TicketCategory[]
 
     TicketCategory (Entity)
     ├── id: TicketCategoryId
     ├── name: string
     ├── price: Money                    ← Value Object
-    ├── quota: int
-    ├── remainingQuota: int
+    ├── quota: number
+    ├── remainingQuota: number
     ├── salesPeriod: SalesPeriod        ← Value Object (startDate, endDate)
-    └── isActive: bool
+    └── isActive: boolean
 
 Booking (Aggregate Root)
 ├── id: BookingId
 ├── customerId: CustomerId
 ├── eventId: EventId
 ├── ticketCategoryId: TicketCategoryId
-├── quantity: int
+├── quantity: number
 ├── totalPrice: Money                   ← Value Object
 ├── status: BookingStatus               ← Enum (PendingPayment, Paid, Expired, Refunded)
 ├── paymentDeadline: PaymentDeadline    ← Value Object
-└── tickets: List<Ticket>
+└── tickets: Ticket[]
 
     Ticket (Entity)
     ├── id: TicketId
@@ -269,21 +282,21 @@ Booking (Aggregate Root)
 Refund (Aggregate Root)
 ├── id: RefundId
 ├── bookingId: BookingId
-├── requestedAt: DateTime
+├── requestedAt: Date
 ├── status: RefundStatus                ← Enum (Requested, Approved, Rejected, PaidOut)
-├── rejectionReason: string?
-└── paymentReference: string?
+├── rejectionReason?: string
+└── paymentReference?: string
 ```
 
 ### Value Objects
 
 | Value Object | Attributes | Validation Rules |
 |---|---|---|
-| `Money` | amount (decimal), currency (string) | amount >= 0 |
-| `EventSchedule` | startDate (DateTime), endDate (DateTime) | endDate >= startDate |
-| `SalesPeriod` | startDate (DateTime), endDate (DateTime) | endDate <= event startDate |
+| `Money` | amount (number), currency (string) | amount >= 0 |
+| `EventSchedule` | startDate (Date), endDate (Date) | endDate >= startDate |
+| `SalesPeriod` | startDate (Date), endDate (Date) | endDate <= event startDate |
 | `TicketCode` | code (string) | unique, non-empty |
-| `PaymentDeadline` | deadline (DateTime) | deadline > booking createdAt |
+| `PaymentDeadline` | deadline (Date) | deadline > booking createdAt |
 
 ### Repository Interfaces (declared in Domain Layer)
 
