@@ -5,25 +5,23 @@
 ```
 event-ticketing/
 ├── src/
-│   ├── domain/
-│   │   ├── aggregates/
-│   │   │   ├── event/
-│   │   │   ├── booking/
-│   │   │   └── refund/
-│   │   ├── value-objects/
-│   │   ├── events/
-│   │   ├── repositories/
-│   │   ├── services/
-│   │   └── exceptions/
-│   ├── application/
-│   ├── infrastructure/
-│   └── presentation/
-├── test/
-│   └── domain/
-├── nest-cli.json
-├── tsconfig.json
-├── package.json
-└── .env.example
+│   ├── Domain/
+│   │   ├── Aggregates/
+│   │   │   ├── Event/
+│   │   │   ├── Booking/
+│   │   │   └── Refund/
+│   │   ├── ValueObjects/
+│   │   ├── Events/
+│   │   ├── Repositories/
+│   │   ├── Services/
+│   │   └── Exceptions/
+│   ├── Application/
+│   ├── Infrastructure/
+│   └── Presentation/
+├── tests/
+│   └── Domain.Tests/
+├── EventTicketing.sln
+└── .env
 ```
 
 ---
